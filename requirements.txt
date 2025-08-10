@@ -1,0 +1,6 @@
+# Core dbt dependencies for medallion architecture
+dbt-duckdb==1.8.3
+duckdb==1.1.3
+
+# Essential for data processing
+pandas==2.2.2

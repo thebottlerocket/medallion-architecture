@@ -1,0 +1,202 @@
+
+version: 2
+
+sources: []
+
+seeds:
+  - name: pos_item
+    description: "Point of Sale item master data"
+    columns:
+      - name: pos_sku
+        description: "Unique POS system SKU identifier"
+        tests: 
+          - not_null
+          - unique
+      - name: upc
+        description: "Universal Product Code"
+        tests: 
+          - not_null
+          - dbt_expectations.expect_column_values_to_match_regex:
+              regex: '^[0-9]{12}$'
+      - name: name
+        description: "Product name in POS system"
+        tests:
+          - not_null
+      - name: status
+        description: "Product status in POS system"
+        tests:
+          - accepted_values:
+              values: ['ACTIVE', 'DISCONTINUED', 'SEASONAL']
+              
+  - name: ecom_catalog
+    description: "E-commerce catalog data"
+    columns:
+      - name: ecom_sku
+        description: "E-commerce product identifier"
+        tests:
+          - not_null
+          - unique
+      - name: gtin
+        description: "Global Trade Item Number"
+        tests: 
+          - not_null
+          
+  - name: supplier_catalog
+    description: "Supplier product catalog"
+    columns:
+      - name: supplier_sku
+        description: "Supplier SKU identifier"
+        tests:
+          - not_null
+          - unique
+          
+  - name: pricing
+    description: "Product pricing data"
+    columns:
+      - name: product_upc
+        description: "Product identifier for pricing"
+        tests:
+          - not_null
+      - name: price
+        description: "Product price"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: "{{ var('data_quality')['max_price'] }}"
+
+models:
+  - name: stg_pos_item
+    description: "Staged POS item data with standardized format"
+    columns:
+      - name: upc
+        description: "Standardized UPC code"
+        tests: 
+          - not_null
+          - unique
+      - name: source_system
+        description: "Source system identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['pos']
+              
+  - name: stg_ecom_catalog
+    description: "Staged e-commerce catalog data"
+    columns:
+      - name: gtin
+        description: "Standardized GTIN code"
+        tests: 
+          - not_null
+          - unique
+      - name: source_system
+        description: "Source system identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ecom']
+              
+  - name: stg_supplier_catalog
+    description: "Staged supplier catalog data"
+    columns:
+      - name: gtin
+        description: "Standardized GTIN code"
+        tests: 
+          - not_null
+      - name: source_system
+        description: "Source system identifier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['supplier']
+              
+  - name: stg_pricing
+    description: "Staged pricing data"
+    columns:
+      - name: upc_gtin
+        description: "Product identifier"
+        tests: 
+          - not_null
+          
+  - name: s_product_keys
+    description: "Silver layer - standardized product keys and identifiers"
+    columns:
+      - name: product_key
+        description: "Master product key - primary identifier"
+        tests: 
+          - not_null
+          - unique
+      - name: natural_key
+        description: "Standardized UPC/GTIN identifier"
+        tests:
+          - not_null
+          
+  - name: s_product_attributes
+    description: "Silver layer - conformed product attributes with survivorship"
+    columns:
+      - name: product_key
+        description: "Master product key"
+        tests: 
+          - not_null
+          - unique
+          - relationships:
+              to: ref('s_product_keys')
+              field: product_key
+      - name: product_name
+        description: "Survived product name"
+        tests:
+          - not_null
+      - name: is_active
+        description: "Product active status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+              
+  - name: s_product_pricing
+    description: "Silver layer - product pricing data"
+    columns:
+      - name: upc_gtin
+        description: "Product identifier for pricing"
+        tests:
+          - not_null
+      - name: price_store
+        description: "Store price"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: "{{ var('data_quality')['max_price'] }}"
+              
+  - name: dim_product_master
+    description: "Gold layer - master product dimension with full attributes and pricing"
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('s_product_keys')
+    columns:
+      - name: product_key
+        description: "Master product key - primary identifier"
+        tests: 
+          - not_null
+          - unique
+      - name: product_name
+        description: "Master product name"
+        tests: 
+          - not_null
+      - name: upc_gtin
+        description: "Product UPC/GTIN"
+        tests:
+          - not_null
+      - name: price_store
+        description: "Current store price"
+        tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: "{{ var('data_quality')['max_price'] }}"
+              
+  - name: v_product_master
+    description: "Gold layer - product master view with business-friendly formatting"
+    columns:
+      - name: product_key
+        description: "Master product key"
+        tests: 
+          - not_null
+          - unique

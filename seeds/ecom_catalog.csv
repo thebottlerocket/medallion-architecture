@@ -1,0 +1,6 @@
+ecom_sku,gtin,title,brand,net_content,net_uom,category,status
+EC-001,041220007118,H‑E‑B Whole Milk,HEB,1,GAL,Dairy,ACTIVE
+EC-002,041220845432,HEB Organic Brown Eggs 12 Count,HEB,12,CT,Dairy,ACTIVE
+EC-003,041220334567,HEB Sourdough Bread,HEB,24,OZ,Bakery,ACTIVE
+EC-004,041220778901,ColaCo Cola Soda 12 Pack,ColaCo,12,PK,Beverages,ACTIVE
+EC-005,041220112233,TomaBest Ketchup 38 oz,TomaBest,38,OZ,Pantry,ACTIVE

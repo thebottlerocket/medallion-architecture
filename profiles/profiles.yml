@@ -1,0 +1,8 @@
+
+medallion_product_mvp:
+  outputs:
+    dev:
+      type: duckdb
+      path: target/duckdb.db
+      threads: 4
+  target: dev

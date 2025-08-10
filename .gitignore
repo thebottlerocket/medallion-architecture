@@ -416,3 +416,8 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# dbt artifacts and build outputs
+target/
+dbt_packages/
+logs/

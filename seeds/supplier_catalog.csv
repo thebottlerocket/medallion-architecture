@@ -1,0 +1,6 @@
+supplier_sku,supplier_name,gtin,description,brand,case_size,case_uom
+SUP-1001,DairySup,041220007118,Grade A whole milk gallon,HEB,4,UNIT
+SUP-1002,DairySup,041220845432,Organic cage-free eggs dozen,HEB,6,UNIT
+SUP-1003,BakerySup,041220334567,Artisan sourdough bread loaf,HEB,12,UNIT
+SUP-1004,BeverageSup,041220778901,Cola soda can 12pk,ColaCo,8,UNIT
+SUP-1005,PantrySup,041220112233,Tomato ketchup family size,TomaBest,10,UNIT

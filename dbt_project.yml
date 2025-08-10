@@ -1,0 +1,92 @@
+model-paths: ["models"]     # Where SQL models are stored
+seed-paths: ["seeds"]       # Where CSV files are stored
+macro-paths: ["macros"]     # Where reusable SQL macros are stored
+target-path: "target"       # Where compiled/built files go
+name: 'medallion_product_mvp'
+version: '1.0.0'
+profile: 'medallion_product_mvp'
+
+config-version: 2
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# Global variables for configuration
+vars:
+  # Survivorship rules configuration
+  survivorship_rules:
+    name_priority: ['ecom', 'pos', 'supplier']
+    brand_priority: ['ecom', 'pos', 'supplier']
+    category_priority: ['pos', 'ecom', 'supplier']
+  
+  # Data quality thresholds
+  data_quality:
+    max_price: 10000
+    min_price: 0
+    max_row_variance_pct: 20
+
+models:
+  medallion_product_mvp:
+    +materialized: table
+    +on_schema_change: "fail"
+    staging:
+      +schema: bronze
+      +materialized: view
+    silver:
+      +schema: silver
+      +materialized: table
+      +post-hook: "{{ log('Silver layer model completed: ' ~ this.name, info=true) }}"
+    gold:
+      +schema: gold
+      +materialized: table
+      +post-hook: "{{ log('Gold layer model completed: ' ~ this.name, info=true) }}"
+
+seeds:
+  medallion_product_mvp:
+    +schema: raw
+    +quote_columns: false
+    
+    # Specify column types to prevent auto-inference issues
+    pos_item:
+      +column_types:
+        pos_sku: varchar
+        upc: varchar
+        name: varchar
+        brand: varchar
+        size: varchar
+        size_uom: varchar
+        category: varchar
+        subcategory: varchar
+        status: varchar
+    
+    ecom_catalog:
+      +column_types:
+        product_id: varchar
+        gtin: varchar
+        title: varchar
+        brand: varchar
+        size: varchar
+        size_uom: varchar
+        category: varchar
+        status: varchar
+    
+    supplier_catalog:
+      +column_types:
+        supplier_sku: varchar
+        gtin: varchar
+        description: varchar
+        brand: varchar
+    
+    pricing:
+      +column_types:
+        product_upc: varchar
+        channel: varchar
+        price: decimal(10,2)
+        current: boolean
+        valid_from: date
+        valid_to: date

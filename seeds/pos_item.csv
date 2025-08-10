@@ -1,0 +1,6 @@
+pos_sku,upc,name,brand,size,size_uom,category,subcategory,status
+100001,041220007118,Whole Milk 1 Gallon,HEB,1,GAL,Dairy,Milk,ACTIVE
+100002,041220845432,Organic Brown Eggs 12ct,HEB,12,CT,Dairy,Eggs,ACTIVE
+100003,041220334567,Sourdough Bread 24oz,HEB,24,OZ,Bakery,Bread,ACTIVE
+100004,041220778901,Fizzy Cola 12pk,ColaCo,12,PK,Beverages,Soda,ACTIVE
+100005,041220112233,Classic Ketchup 38oz,TomaBest,38,OZ,Pantry,Condiments,DISCONTINUED
