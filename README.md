@@ -165,7 +165,7 @@ medallion-architecture/
 ├── requirements.txt           # Python dependencies
 ├── models/                    # dbt models
 │   ├── staging/              # Bronze layer models
-│   ├── silver/               # Silver layer models  
+│   ├── silver/               # Silver layer models
 │   ├── gold/                 # Gold layer models
 │   └── schema.yml            # Model tests and documentation
 ├── seeds/                     # Sample CSV data
@@ -173,10 +173,11 @@ medallion-architecture/
 │   ├── ecom_catalog.csv      # E-commerce catalog
 │   ├── supplier_catalog.csv  # Supplier products
 │   └── pricing.csv           # Product pricing
-├── macros/                    # Reusable dbt macros
 ├── profiles/                  # dbt connection profiles
 ├── run-simple.bat            # Windows execution script
-└── run-simple.sh             # Unix execution script
+├── run-simple.sh             # Unix execution script
+├── LICENSE                   # MIT License
+└── .gitignore               # Git ignore rules
 ```
 
 ## Quick Start
@@ -217,10 +218,30 @@ docker run --rm medallion-product-mvp
 ```
 Medallion Architecture MVP - Docker Execution
 ==================================================
-Bronze layer data loaded successfully
-Silver and Gold layers created successfully  
-Tests: Data validation completed
-Your enterprise data platform is ready for business intelligence!
+Python: Python 3.11.13
+Working directory: /app
+
+Installing dbt packages...
+
+STEP 1: Loading raw data (Bronze layer)...
+✓ Raw data loaded successfully
+
+STEP 2: Building models (Silver & Gold layers)...
+✓ All models built successfully
+
+STEP 3: Running data quality tests...
+✓ All tests passed
+
+==================================================
+PIPELINE COMPLETED SUCCESSFULLY!
+==================================================
+Results:
+• Bronze Layer: Raw CSV data ingested and standardized
+• Silver Layer: Business rules applied with survivorship logic  
+• Gold Layer: Analytics-ready product master created
+• Data Quality: All tests passed
+
+Your medallion architecture is ready for analytics!
 ```
 
 **Note**: The container exits after completion. To query the data interactively, use the command in the next section.
@@ -314,9 +335,10 @@ vars:
 
 ### Key Metrics
 - **Data Integration**: 3 source systems → 1 unified product master
-- **Data Quality**: 45 automated tests ensure data integrity
+- **Data Quality**: 45+ automated tests ensure data integrity
 - **Performance**: Complete pipeline execution in <60 seconds
-- **Scalability**: Container-based architecture supports horizontal scaling
+- **Simplicity**: Clean MVP architecture with only essential components
+- **Portability**: Single Docker command execution on any platform
 
 ### Use Cases
 - **Product Information Management (PIM)**: Central product data repository
